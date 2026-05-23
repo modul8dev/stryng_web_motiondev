@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { motion, useInView, AnimatePresence } from 'motion/react';
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import Image from 'next/image';
 
 const TESTIMONIALS = [
   {
@@ -104,12 +105,40 @@ function TestimonialCard({ t, i }: { t: typeof TESTIMONIALS[0]; i: number }) {
 }
 
 export default function Testimonials() {
+  const sectionRef = useRef<HTMLElement>(null);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
 
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const leftColY  = useTransform(scrollYProgress, [0, 1], ['8%', '-8%']);
+  const rightColY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
+  const bgSkew    = useTransform(scrollYProgress, [0, 1], ['-2deg', '2deg']);
+
   return (
-    <section id="testimonials" className="relative py-28 overflow-hidden">
+    <section ref={sectionRef} id="testimonials" className="relative py-28 overflow-hidden">
       <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
+
+      {/* Parallax product image columns in background */}
+      <motion.div
+        style={{ y: leftColY, skewY: bgSkew }}
+        className="absolute -left-8 top-0 bottom-0 flex flex-col gap-4 opacity-[0.06] pointer-events-none"
+      >
+        {['/images/products/bag.jpg', '/images/products/watch.jpg', '/images/products/jewelry.jpg'].map((src, i) => (
+          <div key={i} className="relative w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
+            <Image src={src} alt="" fill className="object-cover" sizes="128px" />
+          </div>
+        ))}
+      </motion.div>
+      <motion.div
+        style={{ y: rightColY, skewY: bgSkew }}
+        className="absolute -right-8 top-0 bottom-0 flex flex-col gap-4 opacity-[0.06] pointer-events-none"
+      >
+        {['/images/products/sneakers.jpg', '/images/products/candle.jpg', '/images/products/skincare.jpg'].map((src, i) => (
+          <div key={i} className="relative w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
+            <Image src={src} alt="" fill className="object-cover" sizes="128px" />
+          </div>
+        ))}
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-6">
         <div ref={ref} className="text-center mb-16">

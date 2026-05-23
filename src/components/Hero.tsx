@@ -9,6 +9,7 @@ import {
   useMotionValue,
   useSpring,
 } from 'motion/react';
+import Image from 'next/image';
 import MagneticButton from './MagneticButton';
 
 const TYPING_URL = 'https://yourstore.com/products';
@@ -20,7 +21,7 @@ const SOCIAL_MOCKUPS = [
     platform: 'Instagram',
     color: '#E1306C',
     bg: 'from-pink-600/20 to-purple-600/20',
-    icon: '📸',
+    image: '/images/products/bag.jpg',
     label: 'Product Reel',
     size: 'col-span-1 row-span-2',
     delay: 0,
@@ -30,7 +31,7 @@ const SOCIAL_MOCKUPS = [
     platform: 'TikTok',
     color: '#69C9D0',
     bg: 'from-cyan-500/20 to-black/40',
-    icon: '🎵',
+    image: '/images/products/sneakers.jpg',
     label: 'Viral Short',
     size: 'col-span-1 row-span-1',
     delay: 0.08,
@@ -40,7 +41,7 @@ const SOCIAL_MOCKUPS = [
     platform: 'LinkedIn',
     color: '#0A66C2',
     bg: 'from-blue-600/20 to-slate-800/40',
-    icon: '💼',
+    image: '/images/products/watch.jpg',
     label: 'Brand Story',
     size: 'col-span-1 row-span-1',
     delay: 0.16,
@@ -50,7 +51,7 @@ const SOCIAL_MOCKUPS = [
     platform: 'Facebook',
     color: '#1877F2',
     bg: 'from-blue-500/20 to-indigo-800/40',
-    icon: '🎠',
+    image: '/images/products/sunglasses.jpg',
     label: 'Carousel Ad',
     size: 'col-span-1 row-span-1',
     delay: 0.24,
@@ -60,7 +61,7 @@ const SOCIAL_MOCKUPS = [
     platform: 'X / Twitter',
     color: '#FFFFFF',
     bg: 'from-white/10 to-zinc-800/40',
-    icon: '𝕏',
+    image: '/images/products/candle.jpg',
     label: 'Trending Post',
     size: 'col-span-1 row-span-1',
     delay: 0.32,
@@ -201,6 +202,32 @@ export default function Hero() {
       {/* Background radial glow */}
       <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-brand-600/8 blur-[120px] pointer-events-none" />
+
+      {/* Floating product images — background depth layer */}
+      {[
+        { src: '/images/products/perfume.jpg', x: '5%', y: '15%', rotate: -12, delay: 0.6, size: 80 },
+        { src: '/images/products/jewelry.jpg', x: '88%', y: '10%', rotate: 14, delay: 0.8, size: 72 },
+        { src: '/images/products/watch.jpg',   x: '92%', y: '60%', rotate: -8,  delay: 1.0, size: 88 },
+        { src: '/images/products/candle.jpg',  x: '3%',  y: '65%', rotate: 10,  delay: 0.9, size: 76 },
+        { src: '/images/products/skincare.jpg',x: '7%',  y: '38%', rotate: -6,  delay: 1.1, size: 64 },
+      ].map((item, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, scale: 0.7, rotate: item.rotate * 1.5 }}
+          animate={{ opacity: 0.18, scale: 1, rotate: item.rotate }}
+          transition={{ duration: 1.2, delay: item.delay, ease: [0.22, 1, 0.36, 1] }}
+          style={{ left: item.x, top: item.y, width: item.size, height: item.size }}
+          className="absolute pointer-events-none hidden lg:block"
+        >
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
+            className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
+          >
+            <Image src={item.src} alt="" fill className="object-cover" sizes="100px" />
+          </motion.div>
+        </motion.div>
+      ))}
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col items-center text-center gap-8 py-16">
 
@@ -366,33 +393,44 @@ export default function Hero() {
                           damping: 18,
                           delay: mock.delay,
                         }}
-                        className={`${mock.size} rounded-xl bg-gradient-to-br ${mock.bg} border border-white/10 backdrop-blur-sm p-4 flex flex-col justify-between min-h-[100px] relative overflow-hidden`}
+                        className={`${mock.size} rounded-xl border border-white/10 backdrop-blur-sm flex flex-col justify-between min-h-[100px] relative overflow-hidden`}
                       >
+                        {/* Product image background */}
+                        <div className="absolute inset-0">
+                          <Image
+                            src={mock.image}
+                            alt={mock.label}
+                            fill
+                            className="object-cover"
+                            sizes="150px"
+                          />
+                          <div className={`absolute inset-0 bg-gradient-to-br ${mock.bg} opacity-80`} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+                        </div>
                         {/* Shimmer */}
                         <motion.div
                           animate={{ x: ['-100%', '200%'] }}
                           transition={{ duration: 1.5, delay: mock.delay + 0.3, ease: 'easeInOut' }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/6 to-transparent skew-x-12"
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent skew-x-12 z-10"
                         />
-                        <div className="flex items-start justify-between">
-                          <span className="text-2xl">{mock.icon}</span>
+                        <div className="relative z-10 p-3 flex items-start justify-between">
                           <span
                             className="platform-pill text-[10px]"
                             style={{
-                              background: `${mock.color}22`,
+                              background: `${mock.color}33`,
                               color: mock.color,
-                              border: `1px solid ${mock.color}44`,
+                              border: `1px solid ${mock.color}55`,
                             }}
                           >
                             {mock.platform}
                           </span>
                         </div>
-                        <div>
-                          <div className="text-xs font-semibold text-white/80 mb-1">{mock.label}</div>
+                        <div className="relative z-10 p-3">
+                          <div className="text-xs font-semibold text-white mb-1">{mock.label}</div>
                           {/* Fake content lines */}
                           <div className="space-y-1">
-                            <div className="h-1.5 bg-white/10 rounded-full w-3/4" />
-                            <div className="h-1.5 bg-white/10 rounded-full w-1/2" />
+                            <div className="h-1.5 bg-white/20 rounded-full w-3/4" />
+                            <div className="h-1.5 bg-white/20 rounded-full w-1/2" />
                           </div>
                         </div>
                         {/* Ready badge */}
@@ -400,7 +438,7 @@ export default function Hero() {
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: mock.delay + 0.5, type: 'spring', stiffness: 400, damping: 15 }}
-                          className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"
+                          className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50 z-20"
                         />
                       </motion.div>
                     ))}

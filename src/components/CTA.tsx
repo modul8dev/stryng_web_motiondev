@@ -1,20 +1,81 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'motion/react';
+import {
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  useVelocity,
+  useSpring,
+  useMotionValue,
+  useAnimationFrame,
+} from 'motion/react';
 import MagneticButton from './MagneticButton';
 
+// Reusable wrap helper
+function wrap(min: number, max: number, v: number): number {
+  const range = max - min;
+  return ((((v - min) % range) + range) % range) + min;
+}
+
+// Velocity-driven background ribbon
+function VelocityRibbon() {
+  const baseX = useMotionValue(0);
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false });
+  const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
+  const dir = useRef<number>(1);
+
+  useAnimationFrame((_t, delta) => {
+    let moveBy = dir.current * 6 * (delta / 1000);
+    if (velocityFactor.get() < 0) dir.current = -1;
+    else if (velocityFactor.get() > 0) dir.current = 1;
+    moveBy += dir.current * moveBy * velocityFactor.get();
+    baseX.set(baseX.get() + moveBy);
+  });
+
+  const items = ['Get Started Free', '⚡ Stryng.io', 'No Credit Card', '🚀 Launch Today',
+    'AI-Generated Content', '✦ Brand-Matched', 'Cancel Anytime', '◆ 2,400+ Founders'];
+  const repeated = [...items, ...items, ...items, ...items];
+
+  return (
+    <div className="absolute -bottom-1 left-0 right-0 py-3 bg-brand-600/10 border-y border-brand-600/20 overflow-hidden">
+      <motion.div style={{ x }} className="flex gap-6 whitespace-nowrap">
+        {repeated.map((item, i) => (
+          <span key={i} className="text-xs font-bold text-brand-400/60 shrink-0 select-none">
+            {item}
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export default function CTA() {
+  const sectionRef = useRef<HTMLElement>(null);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  return (
-    <section className="relative py-28 overflow-hidden">
-      {/* Radial glow bg */}
-      <div className="absolute inset-0 bg-gradient-radial from-brand-800/20 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-600/8 blur-[100px] rounded-full pointer-events-none" />
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['-5%', '5%']);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1, 0.96]);
 
-      <div ref={ref} className="relative max-w-4xl mx-auto px-6 text-center">
+  return (
+    <section ref={sectionRef} className="relative py-28 overflow-hidden">
+      {/* Radial glow bg */}
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute inset-0 bg-gradient-radial from-brand-800/20 via-transparent to-transparent pointer-events-none"
+      />
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-600/8 blur-[100px] rounded-full pointer-events-none"
+      />
+
+      <motion.div style={{ scale }} ref={ref} className="relative max-w-4xl mx-auto px-6 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
@@ -85,7 +146,10 @@ export default function CTA() {
             </span>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
+
+      {/* Velocity ribbon */}
+      <VelocityRibbon />
     </section>
   );
 }

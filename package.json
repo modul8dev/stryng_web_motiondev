@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "npm run build && rm -rf /tmp/gh-preview && mkdir -p /tmp/gh-preview/stryng_web_motiondev && cp -r out/. /tmp/gh-preview/stryng_web_motiondev/ && npx serve /tmp/gh-preview"
   },
   "dependencies": {
     "next": "14.2.29",

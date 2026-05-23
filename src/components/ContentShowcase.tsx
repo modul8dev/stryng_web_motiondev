@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import Image from 'next/image';
 
 const PLATFORMS = [
   {
@@ -63,8 +64,15 @@ const PRODUCT = {
 function ProductRawCard() {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 w-full">
-      <div className="w-full aspect-square rounded-lg bg-gradient-to-br from-amber-900/30 to-stone-800/40 mb-3 flex items-center justify-center text-5xl">
-        👜
+      <div className="w-full aspect-square rounded-lg overflow-hidden mb-3 relative">
+        <Image
+          src="/images/products/bag.jpg"
+          alt={PRODUCT.name}
+          fill
+          className="object-cover"
+          sizes="200px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
       </div>
       <div className="text-white font-semibold text-sm">{PRODUCT.name}</div>
       <div className="text-white/40 text-xs mt-0.5">{PRODUCT.desc}</div>
@@ -95,16 +103,15 @@ function PlatformFrame({ platform, isActive }: { platform: typeof PLATFORMS[0]; 
       </div>
 
       {/* Content */}
-      <div className={`w-full ${platform.aspectClass} bg-gradient-to-br from-amber-900/20 to-stone-900/40 flex items-center justify-center relative overflow-hidden`}>
-        {/* Animated product image placeholder */}
-        <motion.div
-          layoutId={`product-icon-${platform.id}`}
-          className="text-6xl"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          👜
-        </motion.div>
+      <div className={`w-full ${platform.aspectClass} relative overflow-hidden`}>
+        {/* Real product image */}
+        <Image
+          src="/images/products/bag.jpg"
+          alt="Product"
+          fill
+          className="object-cover"
+          sizes="400px"
+        />
 
         {/* Branded overlay strip */}
         <motion.div
