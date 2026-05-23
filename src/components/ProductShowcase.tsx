@@ -12,6 +12,7 @@ import {
   useInView,
 } from 'motion/react';
 import Image from 'next/image';
+import { assetPath } from '@/lib/assetPath';
 import MagneticButton from './MagneticButton';
 
 // ── Velocity wrap helper ─────────────────────────────────────────────────────
@@ -190,7 +191,7 @@ function ProductCard({ product, index }: { product: typeof PRODUCTS[0]; index: n
       {/* Image */}
       <div className="relative w-full aspect-[4/3] overflow-hidden">
         <Image
-          src={product.image}
+          src={assetPath(product.image)}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"

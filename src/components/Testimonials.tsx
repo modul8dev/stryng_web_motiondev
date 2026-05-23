@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import Image from 'next/image';
+import { assetPath } from '@/lib/assetPath';
 
 const TESTIMONIALS = [
   {
@@ -125,7 +126,7 @@ export default function Testimonials() {
       >
         {['/images/products/bag.jpg', '/images/products/watch.jpg', '/images/products/jewelry.jpg'].map((src, i) => (
           <div key={i} className="relative w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
-            <Image src={src} alt="" fill className="object-cover" sizes="128px" />
+            <Image src={assetPath(src)} alt="" fill className="object-cover" sizes="128px" />
           </div>
         ))}
       </motion.div>
@@ -135,7 +136,7 @@ export default function Testimonials() {
       >
         {['/images/products/sneakers.jpg', '/images/products/candle.jpg', '/images/products/skincare.jpg'].map((src, i) => (
           <div key={i} className="relative w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
-            <Image src={src} alt="" fill className="object-cover" sizes="128px" />
+            <Image src={assetPath(src)} alt="" fill className="object-cover" sizes="128px" />
           </div>
         ))}
       </motion.div>

@@ -10,6 +10,7 @@ import {
   useSpring,
 } from 'motion/react';
 import Image from 'next/image';
+import { assetPath } from '@/lib/assetPath';
 import MagneticButton from './MagneticButton';
 
 const TYPING_URL = 'https://yourstore.com/products';
@@ -224,7 +225,7 @@ export default function Hero() {
             transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
             className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
           >
-            <Image src={item.src} alt="" fill className="object-cover" sizes="100px" />
+            <Image src={assetPath(item.src)} alt="" fill className="object-cover" sizes="100px" />
           </motion.div>
         </motion.div>
       ))}
@@ -398,7 +399,7 @@ export default function Hero() {
                         {/* Product image background */}
                         <div className="absolute inset-0">
                           <Image
-                            src={mock.image}
+                            src={assetPath(mock.image)}
                             alt={mock.label}
                             fill
                             className="object-cover"

@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
+import { assetPath } from '@/lib/assetPath';
 
 const PLATFORMS = [
   {
@@ -66,7 +67,7 @@ function ProductRawCard() {
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 w-full">
       <div className="w-full aspect-square rounded-lg overflow-hidden mb-3 relative">
         <Image
-          src="/images/products/bag.jpg"
+          src={assetPath('/images/products/bag.jpg')}
           alt={PRODUCT.name}
           fill
           className="object-cover"
@@ -106,7 +107,7 @@ function PlatformFrame({ platform, isActive }: { platform: typeof PLATFORMS[0]; 
       <div className={`w-full ${platform.aspectClass} relative overflow-hidden`}>
         {/* Real product image */}
         <Image
-          src="/images/products/bag.jpg"
+          src={assetPath('/images/products/bag.jpg')}
           alt="Product"
           fill
           className="object-cover"
